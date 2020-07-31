@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<environment_file name="problem_robotics" max_concurrent_actions="3" horizon="15" discount="0.99" version="1.0">
+	<objects_declaration>
+		<typed_objects type="discrete_location">
+			<object name="lab211"/>
+			<object name="outside_lab211"/>
+			<object name="auditorium"/>
+			<object name="corridor"/>
+			<object name="near_elevator1"/>
+			<object name="elevator1"/>
+			<object name="open_area"/>
+			<object name="corner_area"/>
+		</typed_objects>
+		<!--	<typed_objects type="person">    
+			<object name="Tal"/>
+			<object name="Ronen"/>
+			<object name="Or"/>
+		</typed_objects> -->
+		<typed_objects type="outer_elv_button">
+			<object name="up"/>
+			<object name="down"/>
+		</typed_objects>
+		<typed_objects type="robot">
+			<object name="armadillo"/>
+		</typed_objects>
+		<typed_objects type="obj">
+			<object name="can"/>
+			<object name="table1"/>
+			<object name="table2"/>
+			<object name="table3"/>
+			<object name="table4"/>
+		</typed_objects>
+	</objects_declaration>
+	<state_variable_types>
+	<state_variable name="object_at" is_constant="false" type="boolean" default="false">
+			<parameter_type>obj</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="connected" is_constant="true" type="boolean" default="false">
+			<parameter_type>discrete_location</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="possible_location" is_constant="false" type="boolean" default="false">
+			<parameter_type>obj</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="near" is_constant="false" type="boolean" default="false">
+			<parameter_type>robot</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="hand_empty" is_constant="false" type="boolean" default="true">
+			<parameter_type>robot</parameter_type>
+		</state_variable>
+		<state_variable name="door_is_open" is_constant="false" type="boolean" default="false">
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="buttton_associated" is_constant="true" type="boolean" default="false">
+			<parameter_type>outer_elv_button</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="is_elevator" is_constant="true" type="boolean" default="false">
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		
+		<state_variable name="pickable" is_constant="false" type="boolean" default="false">
+			<parameter_type>obj</parameter_type>
+		</state_variable>
+		<state_variable name="holding" is_constant="false" type="boolean" default="false">
+			<parameter_type>robot</parameter_type>
+			<parameter_type>obj</parameter_type>
+		</state_variable>
+	</state_variable_types>
+	<intermediate_variables>
+		<!--	<intermediate_variable name="intm_object_found" type="boolean"  default="false"/>
+		<intermediate_variable name="intm_person_found" type="boolean"  default="false"/> -->
+	</intermediate_variables>
+	<assign_constants_values>
+		<state_variable_with_value>
+			<state_variable type="buttton_associated">
+				<param name="up"/>
+				<param name="near_elevator1"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="is_elevator">
+				<param name="elevator1"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="open_area"/>
+				<param name="near_elevator1"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="open_area"/>
+				<param name="auditorium"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="open_area"/>
+				<param name="corridor"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="open_area"/>
+				<param name="corner_area"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="corner_area"/>
+				<param name="outside_lab211"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="lab211"/>
+				<param name="outside_lab211"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="corner_area"/>
+				<param name="auditorium"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="corner_area"/>
+				<param name="corridor"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="corner_area"/>
+				<param name="near_elevator1"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="near_elevator1"/>
+				<param name="corridor"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="near_elevator1"/>
+				<param name="auditorium"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="corridor"/>
+				<param name="auditorium"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="connected">
+				<param name="near_elevator1"/>
+				<param name="elevator1"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+	</assign_constants_values>
+	<initial_state>
+	<state_variable_with_value>
+			<state_variable type="possible_location">
+				<param name="can"/>
+				<param name="corridor"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="possible_location">
+				<param name="can"/>
+				<param name="outside_lab211"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="hand_empty">
+				<param name="armadillo"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="pickable">
+				<param name="can"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="near">
+				<param name="armadillo"/>
+				<param name="near_elevator1"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="object_at">
+				<param name="table1"/>
+				<param name="corridor"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="object_at">
+				<param name="table2"/>
+				<param name="lab211"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="object_at">
+				<param name="table3"/>
+				<param name="auditorium"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="object_at">
+				<param name="table4"/>
+				<param name="outside_lab211"/>
+			</state_variable>
+			<value>true</value>
+		</state_variable_with_value>
+		<choice type="percents">
+			<option weight="0.6">
+				<state_variable_with_value>
+					<state_variable type="object_at">
+						<param name="can"/>
+						<param name="corridor"/>
+					</state_variable>
+					<value>true</value>
+				</state_variable_with_value>
+			</option>
+			<option weight="0.4">
+				<state_variable_with_value>
+					<state_variable type="object_at">
+						<param name="can"/>
+						<param name="outside_lab211"/>
+					</state_variable>
+					<value>true</value>
+				</state_variable_with_value>
+			</option>
+		</choice>
+	</initial_state>
+	<!--'goal_state' contains a partial list of state variables with values, when goal is reached a reward of 'goal_reward' is given. -->
+	<goal_state goal_reward="1400">
+		<AND>
+			<predicate_condition name="object_at">
+				<field value="$can"/>
+				<field value="$auditorium"/>
+			</predicate_condition>
+			<predicate_condition name="near">
+				<field value="$armadillo"/>
+				<field value="$near_elevator1"/>
+			</predicate_condition>
+		</AND>
+		<!--<predicate_condition name="near">
+			<field value="$armadillo"/>
+			<field value="$lab211"/>
+		</predicate_condition>-->
+	</goal_state>
+	<!--'termination_time' is when the planning ends similar to reaching a goal just without special reward -->
+	<temporal termination_time="50">
+		<time_reward_function>
+			<reward_by_goal_reached_time time_range_start="0" time_range_end="5" one_time_reward="400" reward_per_time_unit="-0.5"/>
+			<reward_by_goal_reached_time time_range_start="6" time_range_end="15" one_time_reward="100" reward_per_time_unit="-1"/>
+			<reward_by_goal_reached_time time_range_start="16" time_range_end="25" one_time_reward="0" reward_per_time_unit="-1"/>
+			<reward_by_goal_reached_time time_range_start="26" time_range_end="50" one_time_reward="-200" reward_per_time_unit="-1"/>
+		</time_reward_function>
+		<temporal_environment_changes>
+			<!--in this example there is a chance of 0.3 that in time 8 the 'can' object will disappear if not in the robot's hand-->
+			<temporal_environment_change change_time="8" reaccuring_every="0">
+				<conditional_effect>
+					<bernoulli_sample_condition>
+						<probability value="0.3"/>
+					</bernoulli_sample_condition>
+					<assignment_effect>
+						<param name="object_at">
+							<!--'?' is for parameter, '$' is for specific object -->
+							<field value="$can"/>
+							<field value=""/>
+						</param>
+						<expression value="true"/>
+					</assignment_effect>
+				</conditional_effect>
+			</temporal_environment_change>
+			<!--in this example there is a chance of 0.1 that if can2 is at 'out_of_reach_warehouse' than at will be moved to the office-->
+			<!--it will  first occur at time 3 and then every 2 time units it will occur again-->
+			<temporal_environment_change change_time="3" reaccuring_every="2">
+				<conditional_effect>
+					<AND>
+						<bernoulli_sample_condition>
+							<probability value="0.1"/>
+						</bernoulli_sample_condition>
+						<predicate_condition name="object_at">
+							<field value="$can2"/>
+							<field value="$out_of_reach_warehouse"/>
+						</predicate_condition>
+					</AND>
+					<!--will add support for more than one effect after condition -->
+					<assignment_effect key_description="" effecting_upon="success">
+						<param name="object_at">
+							<field value="$can2"/>
+							<field value="$out_of_reach_warehouse"/>
+						</param>
+						<expression value="false"/>
+					</assignment_effect>
+					<assignment_effect key_description="" effecting_upon="success">
+						<param name="object_at">
+							<field value="$can2"/>
+							<field value="$office"/>
+						</param>
+						<expression value="true"/>
+					</assignment_effect>
+				</conditional_effect>
+			</temporal_environment_change>
+		</temporal_environment_changes>
+	</temporal>
+</environment_file>
