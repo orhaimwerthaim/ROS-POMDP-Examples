@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plps:achieve_plp is_action_success_observable="true" action_cost="160" glue_file_location="push_button_glue.xml" name="push_button" version="1.0" xmlns:plps="PLP-schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="../PLP-schemas/AchievePLP_schema.xsd">
+	<parameters>
+		<execution_parameters>
+			<param name="?robot">
+				<field value="robot"/>
+			</param>
+			<param name="?near_elevator">
+				<field value="discrete_location"/>
+			</param>
+			<param name="?button">
+				<field value="outer_elv_button"/>
+			</param>
+		</execution_parameters>
+		<input_parameters>
+			<param name="odometry" read_frequency="5"/>
+		</input_parameters>
+		<output_parameters>
+			<param name="robot_result"/>
+		</output_parameters>
+		<non_observable/>
+	</parameters>
+	<variables>
+		<var name="robot_position" input="odometry" type="real"/>
+		<var name="robot_at_target" input="robot_result" type="integer"/>
+	</variables>
+	<constants>
+	</constants>
+	<required_resources>
+		<resource name="robot_wheels">
+			<status type="exclusive"/>
+		</resource>
+	</required_resources>
+	<preconditions>
+	<predicate_condition name="buttton_associated">
+			<field value="?button"/>
+			<field value="?near_elevator"/>
+		</predicate_condition>
+	<predicate_condition name="near">
+			<field value="?robot"/>
+			<field value="?near_elevator"/>
+		</predicate_condition>
+	<predicate_condition name="hand_empty">
+			<field value="?robot"/> 
+		</predicate_condition>
+	</preconditions>
+	<concurrency_conditions>
+	</concurrency_conditions>
+	<concurrent_modules/>
+	<side_effects>
+		<conditional_effect effecting_upon="success">
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="push_elv_button"> 
+				<field value="?robot"/>
+					<field value="?elevator"/>
+					<field value="?floor"/>
+					<field value="?button"/>
+				</predicate_condition>
+			</exists_condition>
+			<predicate_effect name="door_is_open" > 
+				<field value="?near_elevator"/>
+			</predicate_effect>
+		</conditional_effect>
+	</side_effects>
+	<progress_measures>
+	</progress_measures>
+	<achievement_goal>
+	<predicate_condition name="door_is_open" >
+			<field value="?elevator"/> 
+		</predicate_condition> 
+	</achievement_goal>
+	<success_probability>
+		<probability value="0.93"/>
+	</success_probability>
+	<runtime_given_success>
+		<distribution>
+			<uniform>
+				<lower_bound value="8"/>
+				<upper_bound value="8"/>
+			</uniform>
+		</distribution>
+	</runtime_given_success>
+	<failure_modes/>
+	<runtime_given_failure>
+		<distribution>
+			<uniform>
+				<lower_bound value="8"/>
+				<upper_bound value="8"/>
+			</uniform>
+		</distribution>
+	</runtime_given_failure>
+</plps:achieve_plp>
