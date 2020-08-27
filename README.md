@@ -2,7 +2,7 @@
 Contains examples that can be used to check ROS-POMDP.
 
 ## Running
-See [PLP-Converter](https://github.com/orhaimwerthaim/PLP-Converter) and [Solver](https://github.com/orhaimwerthaim/Solver).
+See [PLP-Converter](https://github.com/orhaimwerthaim/PLP-Converter), [Solver](https://github.com/orhaimwerthaim/Solver) and [ROS-Dispatcher](https://github.com/orhaimwerthaim/ROS-Dispatcher).
 These repositories contain instructions on how to run them.
 
 ### Run ROS-POMDP using the Java simulator
