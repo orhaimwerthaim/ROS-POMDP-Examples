@@ -1,0 +1,53 @@
+//
+
+domain plps_domain {
+
+types {
+	robot: object;
+	obj: object;
+	discrete_location: object;
+	floor: object;};
+
+pvariables {
+	success_pick : {interm-fluent, bool, level = 1};
+	success_move_to_point : {interm-fluent, bool, level = 1};
+	success_observe_can : {interm-fluent, bool, level = 1};
+	pick(robot,discrete_location,obj) : { action-fluent, bool, default = false };
+	move_to_point(robot,discrete_location,discrete_location,floor) : { action-fluent, bool, default = false };
+	observe_can(robot,discrete_location,obj) : { action-fluent, bool, default = false };
+	near(robot,discrete_location) : {state-fluent, bool, default = false };
+	hand_empty(robot) : {state-fluent, bool, default = true };
+	pickable(obj) : {state-fluent, bool, default = false };
+	object_at(obj,discrete_location) : {state-fluent, bool, default = false };
+	at_floor(discrete_location,floor) : {non-fluent, bool, default = false };
+	goal_reached : { observ-fluent, bool };
+	obsrv_illegal_action: { observ-fluent , bool};
+	obsrv_pick : { observ-fluent , int};
+	obsrv_move_to_point : { observ-fluent , int};
+	obsrv_observe_can : { observ-fluent , int};};
+
+cpfs {
+	object_at'(?obj_1,?discrete_location_2)=if (success_pick^((exists_{?robot : robot} pick(?robot,?discrete_location_2,?obj_1)))) then false else  object_at(?obj_1,?discrete_location_2);
+	pickable'(?obj_1)=if (success_pick^((exists_{?robot : robot, ?discretelocation : discrete_location} pick(?robot,?discretelocation,?obj_1)))) then false else  pickable(?obj_1);
+	near'(?robot_1,?discrete_location_2)=if (success_move_to_point^((exists_{?to_location : discrete_location, ?any_floor : floor} move_to_point(?robot_1,?discrete_location_2,?to_location,?any_floor)))) then false else if (success_move_to_point^((exists_{?from_location : discrete_location, ?any_floor : floor} move_to_point(?robot_1,?from_location,?discrete_location_2,?any_floor)))) then true else  near(?robot_1,?discrete_location_2);
+	goal_reached=if ((exists_{?any_robot : robot} (( near'(?any_robot,$office)))^(~(( hand_empty'(?any_robot)))))) then true else  false;
+	hand_empty'(?robot_1)=if (success_pick^((exists_{?discretelocation : discrete_location, ?can : obj} pick(?robot_1,?discretelocation,?can)))) then false else  hand_empty(?robot_1);
+	obsrv_pick=KronDelta(success_pick + 0);
+	obsrv_move_to_point=KronDelta(success_move_to_point + 0);
+	obsrv_observe_can=KronDelta(success_observe_can + (exists_{?robot : robot, ?location : discrete_location, ?can : obj}observe_can(?robot,?location,?can) ^ object_at'(?can,?location)^success_observe_can^Bernoulli(0.99)));
+	success_pick=if(exists_{?robot : robot, ?discretelocation : discrete_location, ?can : obj} (pick(?robot,?discretelocation,?can))) then Bernoulli(1.0) else false;
+	success_move_to_point=if(exists_{?robot : robot, ?location1 : discrete_location, ?location2 : discrete_location, ?floor : floor} (move_to_point(?robot,?location1,?location2,?floor))) then Bernoulli(0.93) else false;
+	success_observe_can=if(exists_{?robot : robot, ?location : discrete_location, ?can : obj} (observe_can(?robot,?location,?can))) then Bernoulli(0.99) else false;
+	obsrv_illegal_action=false;};
+
+reward=
+	(if(goal_reached)then 400 else 0)
+	+[sum_{?robot1 : robot, ?discrete_location3 : discrete_location, ?obj2 : obj}[ (200) * pick(?robot1,?discrete_location3,?obj2)]]
+	+[sum_{?robot1 : robot, ?discrete_location3 : discrete_location, ?discrete_location2 : discrete_location, ?floor4 : floor}[ (-20) * move_to_point(?robot1,?discrete_location3,?discrete_location2,?floor4)]]
+	+[sum_{?robot1 : robot, ?discrete_location3 : discrete_location, ?obj2 : obj}[ (-3) * observe_can(?robot1,?discrete_location3,?obj2)]];
+
+state-action-constraints {
+	forall_{?robot1 : robot, ?obj2 : obj, ?discrete_location3 : discrete_location}[pick(?robot1,?discrete_location3,?obj2)=>( ( hand_empty(?robot1))^( object_at(?obj2,?discrete_location3))^( near(?robot1,?discrete_location3))^( pickable(?obj2)))];
+	forall_{?robot1 : robot, ?discrete_location3 : discrete_location, ?floor4 : floor, ?discrete_location2 : discrete_location}[move_to_point(?robot1,?discrete_location3,?discrete_location2,?floor4)=>( ( near(?robot1,?discrete_location3))^( at_floor(?discrete_location3,?floor4))^( at_floor(?discrete_location2,?floor4))^(~(( near(?robot1,?discrete_location2)))))];
+	forall_{?robot1 : robot, ?discrete_location3 : discrete_location, ?obj2 : obj}[observe_can(?robot1,?discrete_location3,?obj2)=>( ( near(?robot1,?discrete_location3)))];};
+}

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plps:observe_plp name="observe_can" action_cost="3" version="1.0" glue_file_location="observe_can.xml"
+				  xmlns:plps="PLP-schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+				  xsi:schemaLocation="../PLP-schemas/ObservePLP_schema.xsd">
+	<parameters>
+		<execution_parameters>
+			<param name="?robot" >
+				<field value="robot"/>
+			</param>
+			<param name="?location">
+				<field value="discrete_location"/>
+			</param>
+			<param name="?can" >
+				<field value="obj"/>
+			</param>
+		</execution_parameters>
+
+		<input_parameters>
+			<param name="rgb_image" read_frequency="5" />
+			<param name="odometry" read_frequency="5" />
+			<param name="arm_controller" read_frequency="1" />
+		</input_parameters>
+
+		<output_parameters>
+			<param name="object_at">
+				<field value="?can"/>
+				<field value="?location"/>
+			</param>
+		</output_parameters>
+
+		<non_observable>
+			<param name="gateway_blocked" />
+			<param name="clear_path" />
+		</non_observable>
+
+	</parameters>
+
+	<variables>
+		<var name="collision_alert" type="boolean" />
+		<var name="arm_moving" type="boolean" />
+		<var name="begin_Aspeed" type="real" />
+		<var name="begin_Lspeed" type="real" />
+	</variables>
+
+	<constants>
+	</constants>
+
+	<required_resources>
+		<resource name="robot_wheels">
+			<status type="exclusive" />
+		</resource>
+		<resource name="robot_camera">
+			<status type="exclusive" />
+		</resource>
+	</required_resources>
+
+	<preconditions>
+		<predicate_condition name="near">
+			<field value="?robot" />
+			<field value="?location" />
+		</predicate_condition>
+	</preconditions>
+
+	<concurrency_conditions>
+		<formula_condition key_description="arm_not_moving">
+			<expression value="arm_moving" />
+			<operator type="="/>
+			<expression value="FALSE" />
+		</formula_condition>
+	</concurrency_conditions>
+
+	<concurrent_modules>
+		<module name="walk_through_gateway" concurrency_type="mutex" />
+	</concurrent_modules>
+
+	<side_effects>
+	</side_effects>
+
+	<progress_measures>
+	</progress_measures>
+
+	<observation_goal_parameter>
+		<param name="object_at">
+			<field value="?can"/>
+			<field value="?location"/>
+		</param>
+	</observation_goal_parameter>
+
+	<failure_to_observe_probability> 
+		<probability value="0.01" /> 
+	</failure_to_observe_probability>
+
+	<correct_param_observation_probability>
+		<probability_given_observed_value>
+			<probability value="0.99" />
+		</probability_given_observed_value>
+	</correct_param_observation_probability>
+
+	<runtime_given_success>
+		<distribution>
+			<normal>
+				<mean value="8" />
+				<variance value="5" />
+			</normal>
+		</distribution>
+	</runtime_given_success>
+
+	<runtime_given_failure>
+		<distribution>
+			<uniform>
+				<lower_bound value="0" />
+				<upper_bound value="20" />
+			</uniform>
+		</distribution>
+	</runtime_given_failure>
+
+</plps:observe_plp>

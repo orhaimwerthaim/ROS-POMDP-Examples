@@ -15,7 +15,7 @@ non-fluents nf_init {
 }
 
 
-instance init_instance {
+instance initial_state_instance {
 	domain = init_domain;
 
 	non-fluents = nf_init;

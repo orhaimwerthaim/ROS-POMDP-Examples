@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plps:achieve_plp is_action_success_observable="true" action_cost="20" glue_file_location="move_to_point_glue.xml" name="move_to_point" version="1.0" xmlns:plps="PLP-schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="../PLP-schemas/AchievePLP_schema.xsd">
+	<parameters>
+		<execution_parameters>
+			<param name="?robot">
+				<field value="robot"/>
+			</param>
+			<param name="?location1">
+				<field value="discrete_location"/>
+			</param>
+			<param name="?location2">
+				<field value="discrete_location"/>
+			</param>
+			<param name="?floor">
+				<field value="floor"/>
+			</param>
+		</execution_parameters>
+
+		<input_parameters>
+			<param name="odometry" read_frequency="5"/>
+		</input_parameters>
+		<output_parameters>
+			<param name="robot_result"/>
+		</output_parameters>
+		<non_observable/>
+	</parameters>
+	<variables>
+		<var name="robot_position" input="odometry" type="real"/>
+		<var name="robot_at_target" input="robot_result" type="integer"/>
+	</variables>
+	<constants>
+	</constants>
+	<required_resources>
+		<resource name="robot_wheels">
+			<status type="exclusive"/>
+		</resource>
+	</required_resources>
+	<preconditions>
+		<predicate_condition name="near">
+			<field value="?robot"/>
+			<field value="?location1"/>
+		</predicate_condition>
+		<predicate_condition name="at_floor">
+			<field value="?location1"/>
+			<field value="?floor"/>
+		</predicate_condition>
+		<predicate_condition name="at_floor">
+			<field value="?location2"/>
+			<field value="?floor"/>
+		</predicate_condition>
+		<not_condition>
+			<predicate_condition name="near">
+				<field value="?robot"/>
+				<field value="?location2"/>
+			</predicate_condition>
+		</not_condition>
+	</preconditions>
+	<concurrency_conditions>
+	</concurrency_conditions>
+	<concurrent_modules/>
+	<side_effects>
+		<conditional_effect effecting_upon="success">
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="move_to_point">
+					<field value="?robot"/>
+					<field value="?from_location"/>
+					<field value="?to_location"/>
+					<field value="?any_floor"/>
+				</predicate_condition>
+			</exists_condition>
+			<not_effect>
+				<predicate_effect name="near" >
+					<field value="?robot"/>
+					<field value="?from_location"/>
+				</predicate_effect>
+			</not_effect>
+		</conditional_effect>
+		<conditional_effect effecting_upon="success">
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="move_to_point">
+					<field value="?robot"/>
+					<field value="?from_location"/>
+					<field value="?to_location"/>
+					<field value="?any_floor"/>
+				</predicate_condition>
+			</exists_condition>
+			<predicate_effect name="near" >
+				<field value="?robot"/>
+				<field value="?to_location"/>
+			</predicate_effect>
+		</conditional_effect>
+	</side_effects>
+	<progress_measures>
+	</progress_measures>
+	<achievement_goal>
+		<predicate_condition name="near">
+			<field value="?robot"/>
+			<field value="?location2"/>
+		</predicate_condition>
+	</achievement_goal>
+	<success_probability>
+		<probability value="0.93"/>
+	</success_probability>
+	<runtime_given_success>
+		<distribution>
+			<uniform>
+				<lower_bound value="20"/>
+				<upper_bound value="20"/>
+			</uniform>
+		</distribution>
+	</runtime_given_success>
+	<failure_modes/>
+	<runtime_given_failure/>
+</plps:achieve_plp>

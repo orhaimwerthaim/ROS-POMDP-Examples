@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plps:achieve_plp is_action_success_observable="true" action_cost="-200" glue_file_location="pick_known_glue.xml" name="pick" version="1.0" xmlns:plps="PLP-schemas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="../PLP-schemas/AchievePLP_schema.xsd">
+	<parameters>
+		<execution_parameters>
+			<param name="?robot">
+				<field value="robot"/>
+			</param>
+			<param name="?discretelocation">
+				<field value="discrete_location"/>
+			</param>
+			<param name="?can">
+				<field value="obj"/>
+			</param>
+		</execution_parameters>
+		<input_parameters>
+			<param name="can_location"/>
+		</input_parameters>
+		<output_parameters>
+			<param name="actionresult"/>
+		</output_parameters>
+		<non_observable/>
+	</parameters>
+	<variables>
+		<var input="trigger" name="is_grabbed" type="string"/>
+		<var input="actionresult" name="is_actionresult" type="boolean"/>
+		<var input="can_location" name="get_can_location" type="boolean"/>
+		<var name="?robot" type="string"/>
+		<var name="?can" type="string"/>
+		<var name="?discretelocation" type="string"/>
+	</variables>
+	<constants>
+		<constant name="PICK_ACTION_COST" type="integer" value="-20" is_plan="true"/>
+		<constant name="SUCCESSFUL_PICK_REWARD" type="integer" value="200" is_plan="true"/>
+	</constants>
+	<required_resources>
+		<resource name="robot_arm">
+			<status type="exclusive"/>
+		</resource>
+	</required_resources>
+	<preconditions>
+		<predicate_condition name="hand_empty">
+			<field value="?robot"/>
+		</predicate_condition>		
+		<predicate_condition name="object_at">
+			<field value="?can"/>
+			<field value="?discretelocation"/> 
+		</predicate_condition>	
+		<predicate_condition name="near">
+			<field value="?robot"/>
+			<field value="?discretelocation"/>
+		</predicate_condition>
+		<predicate_condition name="pickable">
+			<field value="?can"/>
+		</predicate_condition>
+	</preconditions>
+	<concurrency_conditions/>
+	<concurrent_modules/>
+	<side_effects>
+
+		<!-- goal_reached when pick -->
+		<!--<predicate_effect name="goal_reached" effecting_upon="success">
+
+		</predicate_effect> -->
+
+		<!--item is not pickable after pick -->
+		<conditional_effect effecting_upon="success">
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="pick">
+					<field value="?robot"/>
+					<field value="?discretelocation"/>
+					<field value="?can"/>
+				</predicate_condition>
+			</exists_condition>
+			<not_effect>
+				<predicate_effect name="pickable" >
+					<field value="?can"/>
+				</predicate_effect>
+			</not_effect>
+		</conditional_effect>
+
+		<!--hand is not empty after pick -->
+		<conditional_effect effecting_upon="success">
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="pick">
+					<field value="?robot"/>
+					<field value="?discretelocation"/>
+					<field value="?can"/>
+				</predicate_condition>
+			</exists_condition>
+			<not_effect>
+				<predicate_effect name="hand_empty" >
+					<field value="?robot"/>
+				</predicate_effect>
+			</not_effect>
+		</conditional_effect>
+
+
+		<!--object_at is not at location after pick -->
+		<conditional_effect effecting_upon="success">
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="pick">
+					<field value="?robot"/>
+					<field value="?discretelocation"/>
+					<field value="?can"/>
+				</predicate_condition>
+			</exists_condition>
+			<not_effect>
+				<predicate_effect name="object_at" >
+					<field value="?can"/>
+					<field value="?discretelocation"/>
+				</predicate_effect>
+			</not_effect>
+		</conditional_effect>
+
+		<!--<assignment_effect key_description="" effecting_upon="success">
+			<param name="num_of_picked_objects"/>
+			<expression value="num_of_picked_objects + 1"/>
+		</assignment_effect>
+		<conditional_effect>
+			<formula_condition key_description="">
+				<expression value="pickable"/>
+				<operator type="="/>
+				<expression value="pickable"/>
+			</formula_condition>
+			<predicate_effect name="goal"/>
+		</conditional_effect>
+		<predicate_effect name="pickable"  effecting_upon="failure">
+			<field value="?can"/>
+		</predicate_effect>
+		<predicate_effect name="goal"/>
+		<conditional_effect effecting_upon="failure">
+			<OR>
+				<AND>
+					<predicate_condition  name="pickable" >
+						<field value="?can"/>
+					</predicate_condition>
+					<predicate_condition  name="pickable" >
+						<field value="?can2"/>
+					</predicate_condition>
+				</AND>
+				<OR>
+					<predicate_condition  name="pickable" >
+						<field value="?can3"/>
+					</predicate_condition>
+					<predicate_condition  name="pickable" >
+						<field value="?can"/>
+					</predicate_condition>
+				</OR>
+			</OR>
+			<assignment_effect key_description="" effecting_upon="success">
+				<param name="pickable">
+					<field value="?can"/>
+				</param>
+				<expression value="true"/>
+			</assignment_effect>
+		</conditional_effect>
+		<not_effect>
+			<predicate_effect name="object_at"  effecting_upon="always">
+				<field value="?can"/>
+				<field value="?discretelocation"/>
+			</predicate_effect>
+		</not_effect>
+		<not_effect>
+			<predicate_effect name="hand_empty">
+				<field value="?robot"/>
+			</predicate_effect>
+		</not_effect>-->
+	</side_effects>
+	<progress_measures>
+	</progress_measures>
+	<achievement_goal>
+		<!--<predicate_condition name="holding">
+			<field value="?robot"/>
+			<field value="?can"/>
+		</predicate_condition>-->
+		<formula_condition key_description="is_can_grabbed">
+			<expression value="is_grabbed"/>
+			<operator type="="/>
+			<expression value="True"/>
+		</formula_condition>
+	</achievement_goal>
+	<success_probability>
+		<probability value="1"/>
+	</success_probability>
+	<runtime_given_success>
+		<distribution>
+			<uniform>
+				<lower_bound value="7"/>
+				<upper_bound value="7"/>
+			</uniform>
+		</distribution>
+	</runtime_given_success>
+	<failure_modes>
+		<failure_mode>
+			<formula_condition key_description="is_can_location">
+				<expression value="get_can_location"/>
+				<operator type="="/>
+				<expression value="FALSE"/>
+			</formula_condition>
+			<probability value="0"/>
+		</failure_mode>
+		<failure_mode>
+			<formula_condition key_description="unable_picked">
+				<expression value="is_actionresult"/>
+				<operator type="="/>
+				<expression value="TRUE"/>
+			</formula_condition>
+			<probability value="0"/>
+		</failure_mode>
+		<failure_mode>
+			<formula_condition key_description="disambiguate_object">
+				<expression value="is_actionresult"/>
+				<operator type="="/>
+				<expression value="FALSE"/>
+			</formula_condition>
+			<probability value="1"/>
+		</failure_mode>
+	</failure_modes>
+	<runtime_given_failure>
+	</runtime_given_failure>
+</plps:achieve_plp>

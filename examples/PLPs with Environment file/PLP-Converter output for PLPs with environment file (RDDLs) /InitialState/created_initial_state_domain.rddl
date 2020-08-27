@@ -1,0 +1,35 @@
+//
+
+domain initial_state_domain {
+
+types {
+	robot: object;
+	obj: object;
+	discrete_location: object;
+	floor: object;
+	enum_level : { @opt1,@opt2,@opt3 };};
+
+pvariables {
+	pick(robot,discrete_location,obj) : { action-fluent, bool, default = false };
+	move_to_point(robot,discrete_location,discrete_location,floor) : { action-fluent, bool, default = false };
+	observe_can(robot,discrete_location,obj) : { action-fluent, bool, default = false };
+	near(robot,discrete_location) : {state-fluent, bool, default = false };
+	hand_empty(robot) : {state-fluent, bool, default = true };
+	pickable(obj) : {state-fluent, bool, default = false };
+	object_at(obj,discrete_location) : {state-fluent, bool, default = false };
+	at_floor(discrete_location,floor) : {non-fluent, bool, default = false };
+	goal_reached : { observ-fluent, bool };
+	obsrv_illegal_action: { observ-fluent , bool};
+	opt : {interm-fluent, enum_level, level = 1};};
+
+cpfs {
+	object_at'(?obj1,?discrete_location2)=if(opt == @opt1 ^ ?obj1 == $can ^ ?discrete_location2 == $robot_lab) then true else if(opt == @opt2 ^ ?obj1 == $can ^ ?discrete_location2 == $office) then true else if(opt == @opt3 ^ ?obj1 == $can ^ ?discrete_location2 == $robot_lab) then true else object_at(?obj1,?discrete_location2);
+	pickable'(?obj1)=pickable(?obj1);
+	near'(?robot1,?discrete_location2)=if(opt == @opt1 ^ ?robot1 == $armadillo ^ ?discrete_location2 == $office) then true else if(opt == @opt2 ^ ?robot1 == $armadillo ^ ?discrete_location2 == $robot_lab) then true else if(opt == @opt3 ^ ?robot1 == $armadillo ^ ?discrete_location2 == $robot_lab) then true else near(?robot1,?discrete_location2);
+	goal_reached=false;
+	hand_empty'(?robot1)=hand_empty(?robot1);
+	obsrv_illegal_action=false;
+	opt = Discrete ( enum_level ,@opt1 :  0.95 ,@opt2 :  0.03 ,@opt3 :  0.02 );};
+
+reward= 0;
+}

@@ -23,9 +23,11 @@ pvariables {
 	goal_reached : {state-fluent, bool, default = false };
 	change_location : {interm-fluent, bool, level = 3};
 	obsrv_observe_can : { observ-fluent , int};
+	obsrv_illegal_action: { observ-fluent , bool};
 	obsrv_move_to_point : { observ-fluent , int};};
 
 cpfs {
+    obsrv_illegal_action=false;
 	change_location=if (success_move_to_point^Bernoulli(0.5)) then true else  false;
 	object_at'(?obj_1,?discrete_location_2)=if (success_move_to_point^(exists_{?robot : robot, ?from_location : discrete_location, ?floor1 : floor} (( move_to_point(?robot,?from_location,?discrete_location_2,?floor1)))^( change_location))) then false else if (success_move_to_point^(exists_{?robot : robot, ?to_location : discrete_location, ?floor1 : floor} (( move_to_point(?robot,?discrete_location_2,?to_location,?floor1)))^(( object_at(?obj_1,?to_location)))^( change_location))) then true else if (success_pick^((exists_{?robot : robot} pick(?robot,?discrete_location_2,?obj_1)))) then false else  object_at(?obj_1,?discrete_location_2);
 	pickable'(?obj_1)=if (success_pick^((exists_{?robot : robot, ?discretelocation : discrete_location} pick(?robot,?discretelocation,?obj_1)))) then false else  pickable(?obj_1);

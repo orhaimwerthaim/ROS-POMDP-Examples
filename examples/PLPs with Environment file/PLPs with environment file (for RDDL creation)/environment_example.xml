@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<environment_file name="environment_example" max_concurrent_actions="3" horizon="10" discount="0.99" version="1.0" >
+	<objects_declaration>
+		<typed_objects type="discrete_location">
+			<object name="robot_lab"/>
+			<object name="office"/>
+			<object name="hallway"/>
+			<object name="out_of_reach_warehouse"/>
+		</typed_objects>
+		<typed_objects type="floor">
+			<object name="f1"/>
+			<object name="f2"/>
+			<object name="f3"/>
+		</typed_objects>
+		<typed_objects type="robot">
+			<object name="armadillo"/>
+		</typed_objects>
+		<typed_objects type="obj">
+			<object name="can"/>
+			<object name="can2"/>
+		</typed_objects>
+	</objects_declaration>
+	<state_variable_types>
+		<state_variable name="near" is_constant="false" type="boolean" default="false">
+			<parameter_type>robot</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="hand_empty" is_constant="false" type="boolean" default="true">
+			<parameter_type>robot</parameter_type>
+		</state_variable>
+		<state_variable name="pickable" is_constant="false" type="boolean" default="false">
+			<parameter_type>obj</parameter_type>
+		</state_variable>
+		<state_variable name="object_at" is_constant="false" type="boolean" default="false">
+			<parameter_type>obj</parameter_type>
+			<parameter_type>discrete_location</parameter_type>
+		</state_variable>
+		<state_variable name="at_floor" is_constant="true" type="boolean" default="false">
+			<parameter_type>discrete_location</parameter_type>
+			<parameter_type>floor</parameter_type>
+		</state_variable>
+	</state_variable_types>
+	<intermediate_variables>
+	</intermediate_variables>
+	<assign_constants_values>
+		<state_variable_with_value>
+			<state_variable type="at_floor">
+				<param name="robot_lab"/>
+				<param name="f2"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="at_floor">
+				<param name="office"/>
+				<param name="f2"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="at_floor">
+				<param name="hallway"/>
+				<param name="f2"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="at_floor">
+				<param name="out_of_reach_warehouse"/>
+				<param name="f3"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+	</assign_constants_values>
+	<initial_state>
+		<state_variable_with_value>
+			<state_variable type="hand_empty">
+				<param name="armadillo"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value>
+			<state_variable type="pickable">
+				<param name="can"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+		<state_variable_with_value probability_type="bernoulli" probability_parameters="0.5">
+			<state_variable type="object_at">
+				<param name="can2"/>
+				<param name="out_of_reach_warehouse"/>
+			</state_variable >
+			<value>true</value>
+		</state_variable_with_value>
+		<!--in 'choice' element one of the 'option' is selected to be assigned with a chance of the 'option' 'weight' , if 'option' weight is not defined then the remaining weight is divided evenly-->
+		<choice type="percents">
+			<option weight="0.95">
+				<state_variable_with_value>
+					<state_variable type="near">
+						<param name="armadillo"/>
+						<param name="office"/>
+					</state_variable >
+					<value>true</value>
+				</state_variable_with_value>
+				<state_variable_with_value>
+					<state_variable type="object_at">
+						<param name="can"/>
+						<param name="robot_lab"/>
+					</state_variable >
+					<value>true</value>
+				</state_variable_with_value>
+			</option>
+			<option weight="0.03">
+				<state_variable_with_value>
+					<state_variable type="near">
+						<param name="armadillo"/>
+						<param name="robot_lab"/>
+					</state_variable >
+					<value>true</value>
+				</state_variable_with_value>
+				<state_variable_with_value>
+					<state_variable type="object_at">
+						<param name="can"/>
+						<param name="office"/>
+					</state_variable >
+					<value>true</value>
+				</state_variable_with_value>
+			</option>
+			<option>
+				<state_variable_with_value>
+					<state_variable type="near">
+						<param name="armadillo"/>
+						<param name="robot_lab"/>
+					</state_variable >
+					<value>true</value>
+				</state_variable_with_value>
+				<state_variable_with_value>
+					<state_variable type="object_at">
+						<param name="can"/>
+						<param name="robot_lab"/>
+					</state_variable >
+					<value>true</value>
+				</state_variable_with_value>
+			</option>
+		</choice>
+	</initial_state>
+	<!--'goal_state' contains a partial list of state variables with values, when goal is reached a reward of 'goal_reward' is given. -->
+	<goal_state goal_reward="400">
+		<AND>
+			<exists_condition>
+				<param name=""/>
+				<predicate_condition name="near">
+					<field value="?any_robot"/>
+					<field value="$office"/>
+				</predicate_condition>
+			</exists_condition>
+			<not_condition>
+				<predicate_condition name="hand_empty">
+					<field value="?any_robot"/>
+				</predicate_condition>
+			</not_condition>
+		</AND>
+	</goal_state>
+	<!--'termination_time' is when the planning ends similar to reaching a goal just without special reward -->
+	<temporal termination_time="50">
+		<time_reward_function>
+			<reward_by_goal_reached_time time_range_start="0" time_range_end="5" one_time_reward="400" reward_per_time_unit="-0.5"/>
+			<reward_by_goal_reached_time time_range_start="6" time_range_end="15" one_time_reward="100" reward_per_time_unit="-1"/>
+			<reward_by_goal_reached_time time_range_start="16" time_range_end="25" one_time_reward="0" reward_per_time_unit="-1"/>
+			<reward_by_goal_reached_time time_range_start="26" time_range_end="50" one_time_reward="-200" reward_per_time_unit="-1"/>
+		</time_reward_function>
+		<temporal_environment_changes>
+			<!--in this example there is a chance of 0.3 that in time 8 the 'can' object will disappear if not in the robot's hand-->		
+			<temporal_environment_change change_time="8" reaccuring_every="0">
+				<conditional_effect>
+					<bernoulli_sample_condition>
+						<probability value="0.3"/>
+					</bernoulli_sample_condition>
+					<assignment_effect>
+						<param name="object_at">
+							<!--'?' is for parameter, '$' is for specific object -->
+							<field value="$can"/>
+							<field value=""/>
+						</param>
+						<expression value="true"/>
+					</assignment_effect>
+				</conditional_effect>
+			</temporal_environment_change>
+
+			<!--in this example there is a chance of 0.1 that if can2 is at 'out_of_reach_warehouse' than at will be moved to the office-->
+			<!--it will  first occur at time 3 and then every 2 time units it will occur again-->
+			<temporal_environment_change change_time="3" reaccuring_every="2">
+				<conditional_effect>
+					<AND>
+						<bernoulli_sample_condition>
+							<probability value="0.1"/>
+						</bernoulli_sample_condition>
+						<predicate_condition name="object_at">
+							<field value="$can2"/>
+							<field value="$out_of_reach_warehouse"/>
+						</predicate_condition>
+					</AND>
+					<!--will add support for more than one effect after condition -->
+					<assignment_effect key_description="" effecting_upon="success">
+						<param name="object_at">
+							<field value="$can2"/>
+							<field value="$out_of_reach_warehouse"/>
+						</param>
+						<expression value="false"/>
+					</assignment_effect>
+					<assignment_effect key_description="" effecting_upon="success">
+						<param name="object_at">
+							<field value="$can2"/>
+							<field value="$office"/>
+						</param>
+						<expression value="true"/>
+					</assignment_effect>
+				</conditional_effect>
+			</temporal_environment_change>
+		</temporal_environment_changes>
+	</temporal>
+</environment_file>

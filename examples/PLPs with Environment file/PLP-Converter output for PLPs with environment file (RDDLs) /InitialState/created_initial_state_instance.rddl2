@@ -1,0 +1,32 @@
+non-fluents nf_init { 
+	domain = initial_state_domain;
+	objects {
+		robot : {armadillo};
+		obj : {can,can2};
+		discrete_location : {robot_lab,office,hallway,out_of_reach_warehouse};
+		floor : {f1,f2,f3};
+	};
+	non-fluents {
+		at_floor(robot_lab,f2) = true;
+		at_floor(office,f2) = true;
+		at_floor(hallway,f2) = true;
+		at_floor(out_of_reach_warehouse,f3) = true;
+	};
+}
+
+
+instance initial_state_instance {
+	domain = initial_state_domain;
+
+	non-fluents = nf_init;
+
+	init-state {
+		hand_empty(armadillo) = true;
+		pickable(can) = true;
+		object_at(can2,out_of_reach_warehouse) = true;
+	};
+
+	max-nondef-actions = 3;
+	horizon = 10;
+	discount = 0.99;
+}

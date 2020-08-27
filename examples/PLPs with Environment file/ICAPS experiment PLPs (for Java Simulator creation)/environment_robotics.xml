@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<environment_file name="problem_robotics" max_concurrent_actions="3" horizon="15" discount="0.99" version="1.0">
+<environment_file name="environment_robotics" max_concurrent_actions="3" horizon="15" discount="0.99" version="1.0">
 	<objects_declaration>
 		<typed_objects type="discrete_location">
 			<object name="lab211"/>

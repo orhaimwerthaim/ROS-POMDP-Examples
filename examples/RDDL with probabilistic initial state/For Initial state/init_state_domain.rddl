@@ -19,6 +19,7 @@ pvariables {
 	at_floor(discrete_location,floor) : {non-fluent, bool, default = false };
 	goal_reached : {state-fluent, bool, default = false };
 	opt : {interm-fluent, enum_level, level = 1};
+	obsrv_illegal_action: { observ-fluent , bool};
 	obsrv_observe_can : { observ-fluent , int};
 	obsrv_move_to_point : { observ-fluent , int};};
 	
@@ -42,6 +43,7 @@ cpfs {
 	pickable'(?obj_1)=pickable(?obj_1);
 	goal_reached'=goal_reached;
 	obsrv_move_to_point=KronDelta(1 + 0);
+	obsrv_illegal_action=false;
 	obsrv_observe_can=KronDelta(1 + 0);
 	hand_empty'(?robot_1)=hand_empty(?robot_1);};
 	
